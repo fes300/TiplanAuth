@@ -8,13 +8,12 @@ var logger          = require('morgan'),
     mongoose        = require('mongoose');
 
 var app = express();
-
+var dbName = 'mongodb://' + process.env.MONGODB_PORT_27017_TCP_ADDR + ':' + process.env.MONGODB_PORT_27017_TCP_PORT + '/matilde'
+console.log(dbName);
 dotenv.load();
 
-// Parsers
-// old version of line
-// app.use(bodyParser.urlencoded());
-// new version of line
+
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cors());
@@ -30,18 +29,12 @@ app.use((err, req, res, next)=> {
 if (process.env.NODE_ENV !== 'production') {
   app.use(logger('dev'));
   app.use(errorhandler());
-  mongoose.connect('mongodb://localhost/matilde');
+  mongoose.connect(dbName);
 }else{
   app.use(logger('common'));
 }
 
-// app.use(require('./anonymous-routes'));
-// app.use(require('./protected-routes'));
-// app.use(require('./user-routes'));
-//app.use(favicon(__dirname + '/public/favicon.ico'));
-
 app.use('/users', require('./controllers/userController'));
-app.use('/maps', require('./controllers/mapsController'));
 app.use('/sessions', require('./controllers/sessionController'));
 app.use('/quotes', require('./controllers/quotesController'));
 

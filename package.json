@@ -4,6 +4,7 @@
   "description": "An In memory todo for Logged in and not Logged in users",
   "main": "server.js",
   "scripts": {
+    "start": "nodemon server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

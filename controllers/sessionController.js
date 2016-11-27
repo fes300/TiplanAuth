@@ -12,7 +12,6 @@ app.route('/create').post(createSession);
 
 function createSession(req, res) {
   var locals = {};
-
   async.parallel([
 /********* first task getUserScheme **************/
     (callback) => {
@@ -40,6 +39,7 @@ function createSession(req, res) {
         }
         callback();
       },
+
 /********* second task look for user **************/
     (callback) => {
       User.findOne(locals.userScheme.userSearch, function (err, docs) {
@@ -49,10 +49,10 @@ function createSession(req, res) {
       })
     }
   ],
+
 /********* callback task getUserScheme **************/
   () => {
     // encrypter.cryptPassword(locals.user.password, function(hash){console.log('encr:', hash)});
-
     if (!locals.userScheme.username || !req.body.password) {
       return res.status(400).send("You must send the username and the password");
     }
@@ -64,7 +64,7 @@ function createSession(req, res) {
     encrypter.comparePassword(req.body.password, locals.user.password, function(isAMatch){
       if (!isAMatch) {
         return res.status(401).send("The username and password don't match");
-      }else{
+      } else {
         res.status(201).send({
           id_token: createToken(locals.user, process.env.AUTH0_CLIENT_SECRET),
           message: 'welcome! here\'s your token'
@@ -76,7 +76,6 @@ function createSession(req, res) {
 
 function createToken(user, secret) {
   truncated = _.omit(user, 'password');
-  console.log(truncated);
   var expiration = { expiresIn: 60*60*5 };
   return jwt.sign(truncated, secret, expiration);
 }
