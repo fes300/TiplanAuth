@@ -1,0 +1,16 @@
+{
+  "parser": "babel-eslint",
+  "extends": "airbnb",
+  "plugins": [ "import" ],
+  "rules": {
+    semi: [2, "never"],
+    "no-use-before-define": "off",
+    "no-constant-condition": "off",
+    "global-require": "off",
+    "no-var": "off",
+    "no-shadow": "off",
+    "no-underscore-dangle": "off",
+    "max-len": "off",
+    "no-console": "off"
+  },
+}

@@ -63,3 +63,10 @@ now the api sould be listening up and running at `localhost:3001`
 
 to access the container image:
 `docker exec -it [container-id] bash`
+
+
+after you created the container you just start/stop it with
+`docker stop [container-id]`
+`docker start [container-id]`
+
+[the mongo container should be stateful (retain the data you put in)]

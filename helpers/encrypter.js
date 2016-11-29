@@ -1,18 +1,35 @@
-'use strict'
-
-var bcrypt = require('bcrypt');
+var bcrypt = require('bcrypt')
 
 exports.cryptPassword = (password, callback) => {
-  console.log('cripting...');
-  if(!password)
-    return callback(null);
+  if (!password) {
+    return { error: true, message: 'No password?' }
+  }
 
-  let hash = bcrypt.hashSync(password, 10);
-  return callback(hash);
-};
+  if (typeof password !== 'string') {
+    return { error: true, message: 'first argument must be a string' }
+  }
 
-exports.comparePassword = (password, userPassword, callback) => {
-  console.log('comparing...');
-  var isAMatch = bcrypt.compareSync(password, userPassword);
-  return callback(isAMatch);
-};
+  const hash = bcrypt.hashSync(password, 10)
+  return callback(hash)
+}
+
+exports.comparePassword = (password1, password2, callback) => {
+  if (!password1) {
+    return { error: true, message: 'No password?' }
+  }
+
+  if (!password2) {
+    return { error: true, message: 'just one password?' }
+  }
+
+  if (typeof password1 !== 'string') {
+    return { error: true, message: 'first argument must be a string' }
+  }
+
+  if (typeof password2 !== 'string') {
+    return { error: true, message: 'second argument must be a string' }
+  }
+
+  const isAMatch = bcrypt.compareSync(password1, password2)
+  return callback(isAMatch)
+}
