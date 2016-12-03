@@ -1,6 +1,6 @@
 var bcrypt = require('bcrypt')
 
-exports.cryptPassword = (password, callback) => {
+exports.cryptPassword = (password) => {
   if (!password) {
     return { error: true, message: 'No password?' }
   }
@@ -9,11 +9,10 @@ exports.cryptPassword = (password, callback) => {
     return { error: true, message: 'first argument must be a string' }
   }
 
-  const hash = bcrypt.hashSync(password, 10)
-  return callback(hash)
+  return bcrypt.hashSync(password, 10)
 }
 
-exports.comparePassword = (password1, password2, callback) => {
+exports.comparePassword = (password1, password2) => {
   if (!password1) {
     return { error: true, message: 'No password?' }
   }
@@ -30,6 +29,5 @@ exports.comparePassword = (password1, password2, callback) => {
     return { error: true, message: 'second argument must be a string' }
   }
 
-  const isAMatch = bcrypt.compareSync(password1, password2)
-  return callback(isAMatch)
+  return bcrypt.compareSync(password1, password2)
 }

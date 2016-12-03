@@ -44,5 +44,6 @@ app.use('/sessions', require('./controllers/sessionController'))
 app.use('/quotes', require('./controllers/quotesController'))
 
 http.createServer(app).listen(process.env.PORT, (err) => {
-  console.log(`listening in http://localhost:${process.env.PORT}`)
+  if (err) return console.log(err)
+  return console.log(`listening in http://localhost:${process.env.PORT}`)
 })

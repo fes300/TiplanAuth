@@ -7,7 +7,7 @@ var encrypter = require('../helpers/encrypter')
 var app = module.exports = express()
 
 var jwtCheck = jwt({
-  secret: process.env.AUTH0_CLIENT_SECRET,
+  secret: process.env.AUTH_SECRET,
 })
 
 app.use('/', jwtCheck)

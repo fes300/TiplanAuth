@@ -1,70 +1,52 @@
 var express = require('express')
 var User = require('../models/user')
 var _ = require('lodash')
-var async = require('async')
 var jwt = require('jsonwebtoken')
 var encrypter = require('../helpers/encrypter')
 
 var app = module.exports = express()
 app.route('/create').post(createSession)
 
-function createSession(req, res) {
-  const locals = {}
-  async.parallel([
-/* ******** first task getUserScheme ************* */
-    (callback) => {
-      let username
-      let type
-      let userSearch
+async function createSession(req, res) {
+  const userSearch = req.body.username ? { username: req.body.username } : { email: req.body.email }
 
-      // The POST contains a username
-      if (req.body.username) {
-        username = req.body.username
-        type = 'username'
-        userSearch = { username }
-      } else if (req.body.email) {
-        // The POST contains an email and not an username
-        username = req.body.email
-        type = 'email'
-        userSearch = { email: username }
-      } else {
-        return res.status(400).send('You must send at least the username or the email')
-      }
+  /* ******** check data validity ************* */
+  if (userSearch.hasOwnProperty('email') && !userSearch.email) {
+    return res.status(400).send('You must send at least the username or the email')
+  }
+  if (!req.body.password) {
+    return res.status(400).send('You must send the password')
+  }
 
-      locals.userScheme = { username, type, userSearch }
-      return callback()
-    },
-
-/* ******** second task look for user ************* */
-    (callback) => {
-      User.findOne(locals.userScheme.userSearch, (err, docs) => {
-        if (err) return callback(err)
-        locals.user = docs
-        return callback()
+/* ******** look for user ************* */
+  const user = await User.findOne({ username: req.body.username }, (err, docs) => {
+    if (err) {
+      return res.status(401).send({
+        message: 'We had a technical difficulty, sorry',
+        error: err,
       })
-    },
-  ],
-
-/* ******** callback task getUserScheme ************* */
-  () => {
-    // encrypter.cryptPassword(locals.user.password, function(hash){console.log('encr:', hash)});
-    if (!req.body.password) {
-      return res.status(400).send('You must send the password')
     }
+    return docs
+  })
 
-    if (!locals.user) {
-      return res.status(401).send('We can\'t find the user in our database')
-    }
-
-    return encrypter.comparePassword(req.body.password, locals.user.password, isAMatch => {
-      if (!isAMatch) {
-        return res.status(401).send("The username and password don't match")
-      }
-      return res.status(201).send({
-        id_token: createToken(locals.user, process.env.AUTH0_CLIENT_SECRET),
-        message: 'welcome! here\'s your token',
-      })
+  if (!user) {
+    return res.status(401).send({
+      message: 'The user is not registered',
+      error: 'the username/mail used is not found in the database.',
     })
+  }
+
+  const isAMatch = encrypter.comparePassword(req.body.password, user.password)
+  if (!isAMatch) {
+    return res.status(401).send({
+      message: 'The username and password don\'t match',
+      error: 'wrong password.',
+    })
+  }
+  return res.status(201).send({
+    id_token: createToken(user, process.env.AUTH_SECRET),
+    success: true,
+    message: 'welcome! here\'s your token',
   })
 }
 
