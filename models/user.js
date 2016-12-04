@@ -4,7 +4,7 @@ var uniqueValidator = require('mongoose-unique-validator')
 var Schema = mongoose.Schema
 
 
-const validator = validate({
+const emailValidator = validate({
   validator: 'isEmail',
   passIfEmpty: true,
   message: 'The email is not correct.',
@@ -19,11 +19,17 @@ const userSchema = new Schema({
     type: String,
     unique: true,
     dropDups: true,
-    validate: validator,
+    required: true,
+    validate: emailValidator,
   },
   password: {
     type: String,
     required: [true, 'You need to specify a valid password.'],
+  },
+  token: {
+    type: String,
+    required: [true, 'You need to specify a token.'],
+    default: 'undefined',
   },
 })
 
