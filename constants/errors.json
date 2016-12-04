@@ -1,0 +1,13 @@
+{
+  "noCredentialsError": {
+    "message": "You must specify at least the username or the email",
+    "errors": {
+      "credentials": {
+        "name": "ValidatorError",
+        "message": "missing username/email.",
+        "value": null
+      }
+    },
+    "name": "ValidationError"
+  }
+}

@@ -12,14 +12,20 @@ async function createSession(req, res) {
 
   /* ******** check data validity ************* */
   if (userSearch.hasOwnProperty('email') && !userSearch.email) {
-    return res.status(400).send('You must send at least the username or the email')
+    return res.status(400).send({
+      message: 'You must specify at least the username or the email',
+      error: 'no username/email',
+    })
   }
   if (!req.body.password) {
-    return res.status(400).send('You must send the password')
+    return res.status(400).send({
+      message: 'You must send the password',
+      error: 'no password',
+    })
   }
 
 /* ******** look for user ************* */
-  const user = await User.findOne({ username: req.body.username }, (err, docs) => {
+  const user = await User.findOne(userSearch, (err, docs) => {
     if (err) {
       return res.status(401).send({
         message: 'We had a technical difficulty, sorry',

@@ -2,11 +2,11 @@ var bcrypt = require('bcrypt')
 
 exports.cryptPassword = (password) => {
   if (!password) {
-    return { error: true, message: 'No password?' }
+    return null
   }
 
   if (typeof password !== 'string') {
-    return { error: true, message: 'first argument must be a string' }
+    return null
   }
 
   return bcrypt.hashSync(password, 10)
@@ -14,7 +14,7 @@ exports.cryptPassword = (password) => {
 
 exports.comparePassword = (password1, password2) => {
   if (!password1) {
-    return { error: true, message: 'No password?' }
+    return { error: true, message: 'No first password?' }
   }
 
   if (!password2) {

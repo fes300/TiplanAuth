@@ -1,46 +1,5 @@
 # NodeJS JWT Authentication API
 
-#### POST `/users`
-
-You can do a POST to `/users` to create a new user.
-
-The body must have:
-
-* `username`: The username
-* `password`: The password
-
-It returns the following:
-
-```json
-{
-  "id_token": {jwt}
-}
-```
-
-#### POST `/sessions/create`
-
-You can do a POST to `/sessions/create` to log a user in.
-
-The body must have:
-
-* `username`: The username
-* `password`: The password
-
-It returns the following:
-
-```json
-{
-  "id_token": {jwt}
-}
-```
-
-
-### Quotes API
-
-#### GET `/api/random-quote`
-
-It returns a String with a Random quote from Chuck Norris. It doesn't require authentication.
-
 ## Running it
 
 Just clone the repository, run `npm install` and then `node server.js`.
@@ -70,3 +29,53 @@ after you created the container you just start/stop it with
 `docker start [container-id]`
 
 [the mongo container should be stateful (retain the data you put in)]
+
+
+## Not protected paths
+
+### Quotes API
+
+#### GET `/api/random-quote`
+
+It returns a String with a Random quote from Chuck Norris. It doesn't require authentication.
+
+
+## Protected paths
+
+First make a POST call to `/sessions/create` to log in:
+
+#### POST `/sessions/create`
+
+The body must have:
+
+* `username`: The username
+* `password`: The password
+
+If successful, it returns the following:
+
+```json
+{
+  "id_token": {jwt}
+}
+```
+
+Then you must save somewhere in the client the token and all subsequent requests must have the the header
+"Authorization: Bearer `id_token`". For instance, to create a new user:
+
+#### POST `/users/user`
+
+The body must have:
+
+* `username`: The username || `email`: The e-mail
+* `password`: The password
+
+It returns the following:
+
+```json
+{
+  "id_token": {jwt}
+}
+```
+
+to delete a user:
+#### DELETE `/users/user/id`
