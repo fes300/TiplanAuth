@@ -34,6 +34,7 @@
     "lodash": "^2.4.1",
     "mongoose": "^4.4.6",
     "mongoose-unique-validator": "^1.0.3",
+    "mongoose-validator": "^1.2.5",
     "morgan": "^1.2.3"
   },
   "devDependencies": {
@@ -42,7 +43,6 @@
     "eslint-config-airbnb": "^8.0.0",
     "eslint-plugin-import": "^1.6.1",
     "eslint-plugin-jsx-a11y": "^1.0.4",
-    "eslint-plugin-react": "^5.0.1",
-    "mongoose-validator": "^1.2.5"
+    "eslint-plugin-react": "^5.0.1"
   }
 }
