@@ -9,5 +9,27 @@
       }
     },
     "name": "ValidationError"
+  },
+  "bearerNotFound": {
+    "message": "Your user have been deleted",
+    "errors": {
+      "credentials": {
+        "name": "LoginError",
+        "message": "user deleted.",
+        "value": null
+      }
+    },
+    "name": "LoginError"
+  },
+  "notAuthorized": {
+    "message": "You are not authorized to perform this action",
+    "errors": {
+      "credentials": {
+        "name": "AuthError",
+        "message": "user not authorized.",
+        "value": null
+      }
+    },
+    "name": "AuthError"
   }
 }

@@ -1,6 +1,5 @@
 var express = require('express')
 var jwt = require('express-jwt')
-var _ = require('lodash')
 var User = require('../models/user')
 var encrypter = require('../helpers/encrypter')
 var errors = require('../constants/errors.json')
@@ -20,7 +19,7 @@ app.route('/user/:id?')
   .put(updateUser)
 
 function getUsers(req, res) {
-  User.find({}, 'username email', (err, users) => {
+  User.find({}, 'username email token', (err, users) => {
     if (err) {
       res.send.status(206).send(err)
     } else {
@@ -49,13 +48,15 @@ async function addUser(req, res) {
   })
 }
 
-function deleteUser(req, res) {
+async function deleteUser(req, res) {
   if (!req.body.username && !req.body.email) {
     return res.status(400).send(errors.noCredentialsError)
   }
 
-  const searchPath = userSearchPath(req)
+  const authorized = await auth(req, res)
+  if (!authorized.success) return res.status(401).send(authorized.error)
 
+  const searchPath = userSearchPath(req)
   User.remove(searchPath, (err, removed) => {
     if (err) return res.status(401).send(err)
     return res.status(201).json({
@@ -71,6 +72,9 @@ async function updateUser(req, res) {
     return res.status(400).send(errors.noCredentialsError)
   }
 
+  const authorized = await auth(req, res)
+  if (!authorized.success) return res.status(401).send(authorized.error)
+
   const searchPath = userSearchPath(req)
   User.update(searchPath, req.body, (err) => {
     if (err) return res.status(401).send(err)
@@ -83,3 +87,22 @@ async function updateUser(req, res) {
 }
 
 const userSearchPath = (req) => (req.body.username ? { username: req.body.username } : { email: req.body.email })
+
+async function auth(req, res) {
+  const token = req.headers.authorization.split('Bearer ')[1]
+  const requester = await User.findOne({ token }, (err, user) => {
+    if (err) return res.status(401).send(err)
+    return user
+  })
+
+  if (!requester) return { error: errors.bearerNotFound }
+
+  if (req.body.username) {
+    return req.body.username === requester.username
+      ? { success: true }
+      : { error: errors.notAuthorized }
+  }
+  return req.body.email === requester.email
+    ? { success: true }
+    : { error: errors.notAuthorized }
+}

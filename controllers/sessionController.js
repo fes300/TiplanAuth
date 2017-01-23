@@ -25,34 +25,41 @@ async function createSession(req, res) {
   }
 
 /* ******** look for user ************* */
-  const user = await User.findOne(userSearch, (err, docs) => {
+  User.findOne(userSearch, (err, user) => {
     if (err) {
       return res.status(401).send({
         message: 'We had a technical difficulty, sorry',
         error: err,
       })
     }
-    return docs
-  })
 
-  if (!user) {
-    return res.status(401).send({
-      message: 'The user is not registered',
-      error: 'the username/mail used is not found in the database.',
-    })
-  }
+    if (!user) {
+      return res.status(401).send({
+        message: 'The user is not registered',
+        error: 'the username/mail used is not found in the database.',
+      })
+    }
 
-  const isAMatch = encrypter.comparePassword(req.body.password, user.password)
-  if (!isAMatch) {
-    return res.status(401).send({
-      message: 'The username and password don\'t match',
-      error: 'wrong password.',
-    })
-  }
-  return res.status(201).send({
-    id_token: createToken(user, process.env.AUTH_SECRET),
-    success: true,
-    message: 'welcome! here\'s your token',
+    const isAMatch = encrypter.comparePassword(req.body.password, user.password)
+    if (!isAMatch) {
+      return res.status(401).send({
+        message: 'The username and password don\'t match',
+        error: 'wrong password.',
+      })
+    }
+    user.token = '' // eslint-disable-line
+    user.token = createToken(user, process.env.AUTH_SECRET) // eslint-disable-line
+    user.markModified('token')
+
+    user.save(() =>
+      res.status(201).send({
+        token: user.token,
+        success: true,
+        message: 'welcome! here\'s your token',
+      })
+    )
+
+    return user
   })
 }
 
