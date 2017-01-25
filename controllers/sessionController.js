@@ -8,17 +8,17 @@ var app = module.exports = express()
 app.route('/create').post(createSession)
 
 async function createSession(req, res) {
-  const userSearch = req.body.username ? { username: req.body.username } : { email: req.body.email }
+  const userSearch = req.body.userName ? { userName: req.body.userName } : { email: req.body.email }
 
   /* ******** check data validity ************* */
   if (userSearch.hasOwnProperty('email') && !userSearch.email) {
-    return res.status(400).send({
+    return res.status(206).send({
       message: 'You must specify at least the username or the email',
       error: 'no username/email',
     })
   }
   if (!req.body.password) {
-    return res.status(400).send({
+    return res.status(206).send({
       message: 'You must send the password',
       error: 'no password',
     })
@@ -27,14 +27,16 @@ async function createSession(req, res) {
 /* ******** look for user ************* */
   User.findOne(userSearch, (err, user) => {
     if (err) {
-      return res.status(401).send({
+      return res.status(500).send({
         message: 'We had a technical difficulty, sorry',
         error: err,
       })
     }
 
     if (!user) {
-      return res.status(401).send({
+      return res.status(404
+
+      ).send({
         message: 'The user is not registered',
         error: 'the username/mail used is not found in the database.',
       })
@@ -42,19 +44,22 @@ async function createSession(req, res) {
 
     const isAMatch = encrypter.comparePassword(req.body.password, user.password)
     if (!isAMatch) {
-      return res.status(401).send({
+      return res.status(404).send({
         message: 'The username and password don\'t match',
         error: 'wrong password.',
       })
     }
+
     user.token = '' // eslint-disable-line
     user.token = createToken(user, process.env.AUTH_SECRET) // eslint-disable-line
     user.markModified('token')
+    user.markModified('userName')
 
     user.save(() =>
       res.status(201).send({
         token: user.token,
         success: true,
+        userName: user.userName,
         message: 'welcome! here\'s your token',
       })
     )
