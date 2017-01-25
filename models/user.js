@@ -11,7 +11,7 @@ const emailValidator = validate({
 })
 
 const userSchema = new Schema({
-  username: {
+  userName: {
     type: String,
     unique: true,
   },
