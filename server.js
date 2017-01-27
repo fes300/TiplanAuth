@@ -9,8 +9,8 @@ var mongoose = require('mongoose')
 
 var app = express()
 var dbName = process.env.NODE_ENV !== 'production'
-  ? `mongodb://${process.env.MONGODB_PORT_27017_TCP_ADDR}:${process.env.MONGODB_PORT_27017_TCP_PORT}/api`
-  : ''
+  ? `mongodb:${process.env.MONGODB_PORT_27017_TCP_PORT}/api` // mongodb is the alias used in the docker_compose file!
+  : `mongodb://${process.env.MONGODB_PORT_27017_TCP_ADDR}:${process.env.MONGODB_PORT_27017_TCP_PORT}/api`
 
 
 /* express configuration */

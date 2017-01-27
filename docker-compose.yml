@@ -1,0 +1,12 @@
+version: '2'
+services:
+  web:
+    build: .
+    ports:
+      - 3001:3001
+    links:
+      - db:mongodb
+    volumes:
+      - .:/usr/src/app
+  db:
+    image: mongo

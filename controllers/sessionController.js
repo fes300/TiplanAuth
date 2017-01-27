@@ -9,7 +9,6 @@ app.route('/create').post(createSession)
 
 async function createSession(req, res) {
   const userSearch = req.body.userName ? { userName: req.body.userName } : { email: req.body.email }
-
   /* ******** check data validity ************* */
   if (userSearch.hasOwnProperty('email') && !userSearch.email) {
     return res.status(206).send({
@@ -34,14 +33,11 @@ async function createSession(req, res) {
     }
 
     if (!user) {
-      return res.status(404
-
-      ).send({
+      return res.status(404).send({
         message: 'The user is not registered',
         error: 'the username/mail used is not found in the database.',
       })
     }
-
     const isAMatch = encrypter.comparePassword(req.body.password, user.password)
     if (!isAMatch) {
       return res.status(404).send({

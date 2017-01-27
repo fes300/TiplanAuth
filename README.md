@@ -31,6 +31,14 @@ after you created the container you just start/stop it with
 
 [the mongo container should be stateful (retain the data you put in)]
 
+## Running it with Docker compose
+
+you need to have docker-compose installed. When you have it, just type `docker-compose up` from your terminal. it will do everything you need (use -d flag if you don't want to tail the logs of the containers).
+
+You can directly access mongo container from web container using `mongodb`, as it is the alias specified in the `docker-compose.yml` file under the `links` voice of the web container.
+
+If you want to rebuild the image use `docker-compose up --build`.
+
 
 ## Not protected paths
 
