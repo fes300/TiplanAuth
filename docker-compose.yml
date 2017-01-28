@@ -10,3 +10,5 @@ services:
       - .:/usr/src/app
   db:
     image: mongo
+    volumes:
+      - ~/smallProjects/Triplan/mongoData:/data/db
