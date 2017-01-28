@@ -2,15 +2,23 @@ var express = require('express')
 var jwt = require('express-jwt')
 var User = require('../models/user')
 var encrypter = require('../helpers/encrypter')
+var tokenizer = require('../helpers/tokenizer')
 var errors = require('../constants/errors.json')
 
 var app = module.exports = express()
 
-var jwtCheck = jwt({
-  secret: process.env.AUTH_SECRET,
-})
+const filter = req => req.path === '/user' && req.method === 'POST'
 
-app.use('/', jwtCheck)
+const jwtCheck = jwt({
+  secret: process.env.AUTH_SECRET,
+}).unless(filter)
+
+const userSearchPath = (req) => (req.body.username
+  ? { username: req.body.username }
+  : { email: req.body.email })
+
+
+app.use(jwtCheck)
 
 app.route('/').get(getUsers)
 app.route('/user/:id?')
@@ -37,6 +45,7 @@ async function addUser(req, res) {
 
   const hash = encrypter.cryptPassword(user.password)
   user.password = hash
+  user.token = tokenizer.createToken(user)
 
   user.save((error) => {
     if (error) return res.status(206).send(error)
@@ -85,8 +94,6 @@ async function updateUser(req, res) {
     })
   })
 }
-
-const userSearchPath = (req) => (req.body.username ? { username: req.body.username } : { email: req.body.email })
 
 async function auth(req, res) {
   const token = req.headers.authorization.split('Bearer ')[1]

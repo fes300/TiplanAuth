@@ -1,8 +1,8 @@
 var express = require('express')
 var User = require('../models/user')
-var _ = require('lodash')
-var jwt = require('jsonwebtoken')
 var encrypter = require('../helpers/encrypter')
+var tokenizer = require('../helpers/tokenizer')
+
 
 var app = module.exports = express()
 app.route('/create').post(createSession)
@@ -47,7 +47,7 @@ async function createSession(req, res) {
     }
 
     user.token = '' // eslint-disable-line
-    user.token = createToken(user, process.env.AUTH_SECRET) // eslint-disable-line
+    user.token = tokenizer.createToken(user) // eslint-disable-line
     user.markModified('token')
     user.markModified('userName')
 
@@ -62,10 +62,4 @@ async function createSession(req, res) {
 
     return user
   })
-}
-
-function createToken(user, secret) {
-  const truncated = _.omit(user, 'password')
-  const expiration = { expiresIn: 60 * 60 * 5 }
-  return jwt.sign(truncated, secret, expiration)
 }
