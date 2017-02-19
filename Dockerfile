@@ -1,4 +1,4 @@
-FROM node:7.0.0
+FROM node:7.5.0
 
 MAINTAINER federico sordillo <federicosordillo@gmail.com>
 
