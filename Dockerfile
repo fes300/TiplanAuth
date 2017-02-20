@@ -14,7 +14,10 @@ CMD apt-get install libstdc++6
 RUN npm install --global nodemon
 
 RUN mkdir -p /usr/src/app
+COPY package.json /usr/src/app/
+
 WORKDIR /usr/src/app
+
 RUN npm install
 
 CMD [ "npm", "start" ]
