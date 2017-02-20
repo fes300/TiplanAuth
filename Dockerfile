@@ -1,4 +1,4 @@
-FROM node:7.0.0
+FROM node:7.5.0
 
 MAINTAINER federico sordillo <federicosordillo@gmail.com>
 
@@ -14,11 +14,12 @@ CMD apt-get install libstdc++6
 RUN npm install --global nodemon
 
 RUN mkdir -p /usr/src/app
-WORKDIR /usr/src/app
 COPY package.json /usr/src/app/
-COPY . /usr/src/app
 
-CMD [ "npm", "install" ]
+WORKDIR /usr/src/app
+
+RUN npm install
+
 CMD [ "npm", "start" ]
 
 EXPOSE 3001

@@ -1,6 +1,6 @@
 var bcrypt = require('bcrypt')
 
-exports.cryptPassword = (password) => {
+exports.cryptPassword = password => {
   if (!password) {
     return null
   }
