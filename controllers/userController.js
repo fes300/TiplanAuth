@@ -20,7 +20,10 @@ const userSearchPath = (req) => (req.body.username
 
 app.use(jwtCheck)
 
-app.route('/').get(getUsers)
+app.route('/')
+  .get(getUsers)
+app.route('/checkBearer')
+  .get(checkBearer)
 app.route('/user/:id?')
   .post(addUser)
   .delete(deleteUser)
@@ -93,6 +96,16 @@ async function updateUser(req, res) {
       success: true,
     })
   })
+}
+
+async function checkBearer(req, res) {
+  const token = req.headers.authorization.split('Bearer ')[1]
+  const requester = await User.findOne({ token }, (err, user) => {
+    if (err) return res.status(401).send(err)
+    return user
+  })
+  if (!requester) return { error: errors.bearerNotFound }
+  return res.status(201).send(requester)
 }
 
 async function auth(req, res) {
