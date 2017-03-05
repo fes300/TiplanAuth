@@ -1,20 +1,11 @@
 var express = require('express')
-var jwt = require('express-jwt')
 var User = require('../models/user')
 var encrypter = require('../helpers/encrypter')
 var tokenizer = require('../helpers/tokenizer')
 
 
 var app = module.exports = express()
-const filter = req => req.path === '/create'
-
-const jwtCheck = jwt({
-  secret: process.env.AUTH_SECRET,
-}).unless(filter)
-
-app.use(jwtCheck)
 app.route('/create').post(createSession)
-app.route('/check').get(checkToken)
 
 async function createSession(req, res) {
   const userSearch = req.body.userName ? { userName: req.body.userName } : { email: req.body.email }
@@ -71,8 +62,4 @@ async function createSession(req, res) {
 
     return user
   })
-}
-
-function checkToken(req, res) {
-  res.status(201).send({ validToken: true })
 }
