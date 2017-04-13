@@ -3,23 +3,22 @@ var User = require('../models/user')
 var encrypter = require('../helpers/encrypter')
 var tokenizer = require('../helpers/tokenizer')
 
-
 var app = module.exports = express()
 app.route('/create').post(createSession)
 
-async function createSession(req, res) {
+async function createSession (req, res) {
   const userSearch = req.body.userName ? { userName: req.body.userName } : { email: req.body.email }
   /* ******** check data validity ************* */
   if (userSearch.hasOwnProperty('email') && !userSearch.email) {
     return res.status(206).send({
       message: 'You must specify at least the username or the email',
-      error: 'no username/email',
+      error: 'no username/email'
     })
   }
   if (!req.body.password) {
     return res.status(206).send({
       message: 'You must send the password',
-      error: 'no password',
+      error: 'no password'
     })
   }
 
@@ -28,21 +27,21 @@ async function createSession(req, res) {
     if (err) {
       return res.status(500).send({
         message: 'We had a technical difficulty, sorry',
-        error: err,
+        error: err
       })
     }
 
     if (!user) {
       return res.status(404).send({
         message: 'The user is not registered',
-        error: 'the username/mail used is not found in the database.',
+        error: 'the username/mail used is not found in the database.'
       })
     }
     const isAMatch = encrypter.comparePassword(req.body.password, user.password)
     if (!isAMatch) {
       return res.status(404).send({
         message: 'The username and password don\'t match',
-        error: 'wrong password.',
+        error: 'wrong password.'
       })
     }
 
@@ -56,7 +55,7 @@ async function createSession(req, res) {
         token: user.token,
         success: true,
         userName: user.userName,
-        message: 'welcome! here\'s your token',
+        message: 'welcome! here\'s your token'
       })
     )
 

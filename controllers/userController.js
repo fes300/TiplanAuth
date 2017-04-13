@@ -10,13 +10,12 @@ var app = module.exports = express()
 const filter = req => req.path === '/user' && req.method === 'POST'
 
 const jwtCheck = jwt({
-  secret: process.env.AUTH_SECRET,
+  secret: process.env.AUTH_SECRET
 }).unless(filter)
 
 const userSearchPath = (req) => (req.body.username
   ? { username: req.body.username }
   : { email: req.body.email })
-
 
 app.use(jwtCheck)
 
@@ -29,7 +28,7 @@ app.route('/user/:id?')
   .delete(deleteUser)
   .put(updateUser)
 
-function getUsers(req, res) {
+function getUsers (req, res) {
   User.find({}, 'username email token', (err, users) => {
     if (err) {
       res.send.status(206).send(err)
@@ -39,7 +38,7 @@ function getUsers(req, res) {
   })
 }
 
-async function addUser(req, res) {
+async function addUser (req, res) {
   if (!req.body.username && !req.body.email) {
     return res.status(400).send(errors.noCredentialsError)
   }
@@ -55,12 +54,12 @@ async function addUser(req, res) {
     return res.status(201).send({
       message: `${user.username || user.email} was successfully added.`,
       user,
-      success: true,
+      success: true
     })
   })
 }
 
-async function deleteUser(req, res) {
+async function deleteUser (req, res) {
   if (!req.body.username && !req.body.email) {
     return res.status(400).send(errors.noCredentialsError)
   }
@@ -74,12 +73,12 @@ async function deleteUser(req, res) {
     return res.status(201).json({
       message: `${searchPath.username || searchPath.email} was successfully deleted`,
       removed,
-      success: true,
+      success: true
     })
   })
 }
 
-async function updateUser(req, res) {
+async function updateUser (req, res) {
   if (!req.body.username && !req.body.email) {
     return res.status(400).send(errors.noCredentialsError)
   }
@@ -93,12 +92,12 @@ async function updateUser(req, res) {
     return res.status(201).send({
       message: `user ${searchPath.username || searchPath.email} updated correctly`,
       updates: req.body,
-      success: true,
+      success: true
     })
   })
 }
 
-async function checkBearer(req, res) {
+async function checkBearer (req, res) {
   const token = req.headers.authorization.split('Bearer ')[1]
   const requester = await User.findOne({ token }, (err, user) => {
     if (err) return res.status(401).send(err)
@@ -108,7 +107,7 @@ async function checkBearer(req, res) {
   return res.status(201).send(requester)
 }
 
-async function auth(req, res) {
+async function auth (req, res) {
   const token = req.headers.authorization.split('Bearer ')[1]
   const requester = await User.findOne({ token }, (err, user) => {
     if (err) return res.status(401).send(err)

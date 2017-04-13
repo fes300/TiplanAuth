@@ -5,9 +5,9 @@ var app = module.exports = express()
 
 app.route('/').get(getQuote)
 
-function getQuote(req, res) {
+function getQuote (req, res) {
   const quote = Quoter.getRandomOne()
   res.status(201).send({
-    message: quote,
+    message: quote
   })
 }
